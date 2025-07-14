@@ -1,32 +1,32 @@
 import { useNotes } from "../../Context/NotesContext";
 import { findDeleteInNotes } from "../../Utils/findDeleteInNotes";
+import { findNoteInImportant } from "../../Utils/findNoteInImportant";
 import { findNoteInArchive } from "../../Utils/findNotesInArchive";
 
 export const NotesCard = ({ id, Title, Text, isPinned }) => {
-  const { noteDispatch ,archive,bin} = useNotes();
+  const { notesDispatch , archive, bin ,save} = useNotes();
 
-  
+  const isNoteInArchive = findNoteInArchive(archive, id);
+  const isNoteInDelete = findDeleteInNotes(bin, id);
+  const isNoteInImportant = findNoteInImportant(save,id)
 
-  const isNoteInArchive = findNoteInArchive(archive,id)
-  const isNoteInDelete = findDeleteInNotes(bin,id)
-
-  const onPinClick = (id) => {
+    const onPinClick = (id) => {
     !isPinned
-      ? noteDispatch({
+      ? notesDispatch({
           type: "PIN",
           payload: { id },
         })
-      : noteDispatch({
+      : notesDispatch({
           type: "UNPIN",
           payload: { id },
         });
   };
   const onArchiveClcik = (id) => {
     !isNoteInArchive ?
-    noteDispatch({
+    notesDispatch({
       type: "ADD_TO_ARCHIVE",
       payload: { id },
-    }) : noteDispatch({
+    }) : notesDispatch({
       type:"REMOVE_FROM_ARCHIVE",
       payload:{id}
     })
@@ -34,66 +34,94 @@ export const NotesCard = ({ id, Title, Text, isPinned }) => {
 
   const onDeleteClick = (id)=>{
    !isNoteInDelete ?
-    noteDispatch({
+    notesDispatch({
       type:'ADD_TO_BIN',
       payload:{id}
-    }) : noteDispatch({
+    }) : notesDispatch({
       type: "REMOVE_FROM_BIN",
       payload: {id}
     })
   }
+  const onClickSaveButon = (id) =>{
+    !isNoteInImportant ?
+    notesDispatch({
+      type:"ADD_TO_SAVE",
+      payload:{id}
+    }): notesDispatch({
+      type:'REMOVE_FROM_SAVE',
+      payload:{id}
+    })
+  }
 
   return (
-    <div
-      key={id}
-      className="p-4 bg-gray-50 border rounded-lg shadow-sm flex flex-col gap-2"
-    >{!isNoteInArchive && !isNoteInDelete &&
-    <div className="flex items-start justify-between">
-        <h3 className="font-bold text-lg text-gray-800">{Title}</h3>
-        <button
-          onClick={() => onPinClick(id)}
-          title={isPinned ? "Pinned" : "Mark as Important"}
-          className={`p-1 rounded-full transition ${
-            isPinned
-              ? " text-yellow-700 hover:bg-yellow-100"
-              : "hover:bg-yellow-100 text-yellow-600 hover:text-yellow-700"
+    <div className="p-4 bg-white border border-gray-200 rounded-xl shadow-sm flex flex-col gap-3 transition-all hover:shadow-md">
+      <div className="flex items-start justify-between">
+        <h3 className="font-bold text-lg text-gray-800 truncate">{Title}</h3>
+        {!isNoteInArchive && !isNoteInDelete && !isNoteInImportant &&
+        (
+          <button
+            onClick={() => onPinClick(id)}
+            className={`p-1.5 rounded-full transition ${
+              isPinned
+                ? "bg-yellow-100 text-yellow-700"
+                : "text-gray-400 hover:bg-gray-100"
+            }`}
+          >
+            <span
+              className={
+                isPinned ? "material-icons" : "material-icons-outlined"
+              }
+            >
+              push_pin
+            </span>
+          </button>
+        )}
+      </div>
+
+      <p className="text-gray-600 text-sm line-clamp-4 flex-grow">{Text}</p>
+
+      <div className="flex justify-end gap-2 pt-1">
+        {!isNoteInDelete && !isNoteInImportant && (
+          <button
+            onClick={() => onArchiveClcik(id)}
+            className={`p-2 rounded-full transition ${
+              isNoteInArchive
+                ? " text-blue-700"
+                : "text-gray-500 hover:bg-blue-50 hover:text-blue-700"
+            }`}
+          >
+            <span className="material-icons text-xl">
+              {isNoteInArchive ? "unarchive" : "archive"}
+            </span>
+          </button>
+        )}
+        
+         <button
+          onClick={() =>onClickSaveButon(id)}
+          className={`p-2 rounded-full transition ${
+            isNoteInImportant
+              ? " text-black"
+              : "text-gray-500 hover:bg-red-50 hover:text-gray-700"
           }`}
         >
-          <span
-            className={
-              isPinned
-                ? "material-icons text-xl"
-                : "material-icons-outlined text-xl"
-            }
-          >
-            push_pin
+          <span className={isNoteInImportant ? "material-icons text-xl":"material-icons-outlined text-xl"}>
+           
+            bookmark
           </span>
+          
         </button>
-      </div>}
-      
-
-      <p className="text-gray-600">{Text}</p>
-
-      <div className="flex justify-end gap-2 pt-2">
-        {
-          !isNoteInDelete && 
-          <button
-          onClick={() => onArchiveClcik(id)}
-          title="Archive"
-          className="p-2 rounded-full hover:bg-blue-100 text-blue-600 hover:text-blue-700 transition"
-        >
-          <span className={
-            isNoteInArchive ? "material-icons text-xl"
-                : "material-icons-outlined text-xl"
-          }>archive</span>
-        </button>
-        }
         <button
-         onClick={()=>onDeleteClick(id)}
-          title="Delete"
-          className="p-2 rounded-full hover:bg-red-100 text-red-600 hover:text-red-700 transition"
+          onClick={() => onDeleteClick(id)}
+          className={`p-2 rounded-full transition ${
+            isNoteInDelete
+              ? " text-red-700"
+              : "text-red-400 hover:bg-red-50 hover:text-red-700"
+          }`}
         >
-          <span className={isNoteInDelete ? "material-icons text-xl" : "material-icons-outlined text-xl"}>delete</span>
+          <span className={isNoteInDelete ? "material-icons text-xl":"material-icons-outlined text-xl"}>
+            {/* {isNoteInDelete ? "restore_from_trash" : "delete"} */}
+            delete
+          </span>
         </button>
       </div>
     </div>
