@@ -11,7 +11,7 @@ import Home from './Pages/Home'
 
 import Archive from './Pages/Archieve/Archieve'
 import Important from './Pages/Important/Important'
-import { BinPage } from './Pages'
+import { BinPage } from './Pages/Bin/BinPage'
 
 
 function App() {
