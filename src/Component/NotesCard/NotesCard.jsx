@@ -96,7 +96,8 @@ export const NotesCard = ({ id, Title, Text, isPinned }) => {
           </button>
         )}
         
-         <button
+        {
+          !isNoteInDelete && <button
           onClick={() =>onClickSaveButon(id)}
           className={`p-2 rounded-full transition ${
             isNoteInImportant
@@ -110,6 +111,7 @@ export const NotesCard = ({ id, Title, Text, isPinned }) => {
           </span>
           
         </button>
+        }
         <button
           onClick={() => onDeleteClick(id)}
           className={`p-2 rounded-full transition ${
