@@ -5,7 +5,7 @@ import Sidebar from '../../Component/SideBar/Sidebar';
 import { useNotes } from '../../Context/NotesContext';
 import { NotesCard } from '../../Component/NotesCard/NotesCard';
 
-const Bin = () => {
+const BinPage = () => {
   const { bin } = useNotes();
   
   return (
@@ -52,4 +52,4 @@ const Bin = () => {
   );
 }
 
-export default Bin;
+export default BinPage;
