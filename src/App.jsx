@@ -4,14 +4,9 @@ import {Route,Routes} from 'react-router-dom'
 
 import './App.css'
 import Home from './Pages/Home'
-
-
-
-
-
 import Archive from './Pages/Archieve/Archieve'
 import Important from './Pages/Important/Important'
-import { BinPage } from './Pages/Bin/BinPage'
+import { BinPage } from './Pages'
 
 
 function App() {
